@@ -5,11 +5,15 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 
 const app = express();
+const taskRoutes = require("./routes/taskRoutes");
+
 
 // Middleware
 app.use(cors());
-app.use(bodyParser.json());
-
+//app.use(bodyParser.json());
+app.use(express.json());  // ✅ Add this to parse JSON
+app.use(express.urlencoded({ extended: true }));  // ✅ For form data
+app.use("/api", taskRoutes);
 // Database Connection
 mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
@@ -17,10 +21,6 @@ mongoose.connect(process.env.MONGO_URI, {
 }).then(() => console.log("MongoDB Connected"))
   .catch(err => console.log(err));
 
-// Default Route
-app.get("/", (req, res) => {
-    res.send("Location-Based Task Reminder API is running!");
-});
 
 // Start Server
 const PORT = process.env.PORT || 5000;
